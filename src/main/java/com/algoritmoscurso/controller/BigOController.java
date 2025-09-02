@@ -129,9 +129,9 @@ public class BigOController implements IController {
             StringBuilder resultText = new StringBuilder();
             resultText.append("RESULTADO DE EJECUCIÓN:").append(nl);
             resultText.append("Entrada (n): ").append(n).append(nl);
-            resultText.append("Parametro 2: ").append(param2).append(nl);
-            resultText.append("Tiempo de ejecución: ").append(model.getLastExecutionTime()).append(" ns").append(nl);
-            resultText.append("Tiempo en milisegundos: ").append(model.getLastExecutionTime() / 1_000_000.0).append(" ms").append(nl);
+            //resultText.append("Parametro 2: ").append(param2).append(nl);
+            //resultText.append("Tiempo de ejecución: ").append(model.getLastExecutionTime()).append(" ns").append(nl);
+            resultText.append("Tiempo en ejecución (ms): ").append(model.getLastExecutionTime() / 1_000_000.0).append(" ms").append(nl);
             resultText.append("Complejidad: ").append(selectedExample.getTimeComplexity()).append(nl).append(nl);
             
             if (result != null) {
