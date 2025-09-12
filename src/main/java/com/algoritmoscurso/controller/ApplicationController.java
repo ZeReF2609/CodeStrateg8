@@ -6,6 +6,11 @@ import com.algoritmoscurso.view.MainView;
 import com.algoritmoscurso.view.ActividadesView;
 import com.algoritmoscurso.view.semana2.BigOView;
 import com.algoritmoscurso.view.semana2.SortingView;
+import com.algoritmoscurso.view.semana3.CoinChangeView;
+import com.algoritmoscurso.view.semana3.TravelingSalesmanView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.event.TreeSelectionListener;
 
@@ -19,6 +24,7 @@ public class ApplicationController implements IController {
     private ActividadesView actividadesView;
     private SortingController sortingController;
     private BigOController bigOController;
+    private GreedyController greedyController;
     
     public ApplicationController() {
         model = new ApplicationModel();
@@ -27,6 +33,7 @@ public class ApplicationController implements IController {
         // Inicializar controladores específicos
         sortingController = new SortingController(model.getSortingModel());
         bigOController = new BigOController(model.getBigOModel());
+        greedyController = new GreedyController(model.getGreedyModel());
         
         initialize();
     }
@@ -51,21 +58,56 @@ public class ApplicationController implements IController {
         for (String week : weeks) {
             String title = getShortWeekTitle(week);
             actividadesView.addWeekButton(week, title, null);
-            // For semana2 we'll add known activities
+
+            String[] sections = model.getWeekSectionTitles(week);
+
             if ("semana2".equals(week)) {
+                // Definir actividades
                 actividadesView.addActivity(week, "bigO", "Ejemplos Big O");
                 actividadesView.addActivity(week, "sorting", "Algoritmos de Ordenación");
-                // Add the single activity sections
-                String[] sections = model.getWeekSectionTitles(week);
+
+                // Palabras clave por actividad
+                Map<String, String[]> keywords = new HashMap<>();
+                keywords.put("bigO", new String[] { "big o", "bigo", "big" });
+                keywords.put("sorting", new String[] { "orden", "ordenaci" });
+
+                // Asignar secciones según palabras clave
                 for (String sec : sections) {
-                    if (sec.toLowerCase().contains("big o") || sec.toLowerCase().contains("bigo") || sec.toLowerCase().contains("big")) {
-                        actividadesView.addSection(week, "bigO", sec);
-                    } else if (sec.toLowerCase().contains("orden") || sec.toLowerCase().contains("ordenaci")) {
-                        actividadesView.addSection(week, "sorting", sec);
+                    String lower = sec.toLowerCase();
+                    for (Map.Entry<String, String[]> entry : keywords.entrySet()) {
+                        for (String kw : entry.getValue()) {
+                            if (lower.contains(kw)) {
+                                actividadesView.addSection(week, entry.getKey(), sec);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ("semana3".equals(week)) {
+                actividadesView.addActivity(week, "coinchange", "Cambio de Moneda");
+                actividadesView.addActivity(week, "tsp", "Agente Viajero (TSP)");
+
+                // Palabras clave por actividad
+                Map<String, String[]> keywords = new HashMap<>();
+                keywords.put("greedy", new String[] { "voraz", "greedy" });
+                keywords.put("coinchange", new String[] { "moneda", "coin" });
+                keywords.put("tsp", new String[] { "viajero", "tsp" });
+
+                // Asignar secciones según palabras clave
+                for (String sec : sections) {
+                    String lower = sec.toLowerCase();
+                    for (Map.Entry<String, String[]> entry : keywords.entrySet()) {
+                        for (String kw : entry.getValue()) {
+                            if (lower.contains(kw)) {
+                                actividadesView.addSection(week, entry.getKey(), sec);
+                            }
+                        }
                     }
                 }
             }
         }
+
 
         actividadesView.setTreeSelectionListener(new TreeSelectionListener() {
             @Override
@@ -94,6 +136,14 @@ public class ApplicationController implements IController {
                             SortingView sortingView = sortingController.getView();
                             sortingView.setDescription(desc);
                             actividadesView.addTab("Algoritmos de Ordenación", sortingView);
+                        } else if ("coinchange".equals(activityId)) {
+                            CoinChangeView coinView = greedyController.getCoinChangeView();
+                            coinView.setDescription(desc);
+                            actividadesView.addTab("Cambio de Moneda", coinView);
+                        } else if ("tsp".equals(activityId)) {
+                            TravelingSalesmanView tspView = greedyController.getTravelingSalesmanView();
+                            tspView.setDescription(desc);
+                            actividadesView.addTab("Agente Viajero", tspView);
                         }
                         return;
                     } else if (parts.length == 2) {
@@ -115,6 +165,12 @@ public class ApplicationController implements IController {
                                 SortingView sortingView = sortingController.getView();
                                 sortingView.setDescription(desc);
                                 actividadesView.addTab("Algoritmos de Ordenación", sortingView);
+                            } else if ("coinchange".equals(activityId)) {
+                                CoinChangeView coinView = greedyController.getCoinChangeView();
+                                actividadesView.addTab("Cambio de Moneda", coinView);
+                            } else if ("tsp".equals(activityId)) {
+                                TravelingSalesmanView tspView = greedyController.getTravelingSalesmanView();
+                                actividadesView.addTab("Agente Viajero", tspView);
                             }
                         }
                         return;
@@ -136,6 +192,11 @@ public class ApplicationController implements IController {
         if ("semana2".equals(week)) {
             if ("bigO".equals(activityId)) return "Actividad Big O";
             if ("sorting".equals(activityId)) return "Actividad Ordenación";
+        }
+        if ("semana3".equals(week)) {
+            if ("greedy".equals(activityId)) return "Algoritmos Voraces";
+            if ("coinchange".equals(activityId)) return "Cambio de Moneda";
+            if ("tsp".equals(activityId)) return "Agente Viajero";
         }
         return null;
     }
@@ -193,6 +254,17 @@ public class ApplicationController implements IController {
     sortingController.refreshAlgorithmsList();
     }
     
+    /**
+     * Configura el contenido específico de la Semana 3
+     */
+    private void setupSemana3Content() {
+        // Inicializar controlador de algoritmos voraces
+        greedyController.initialize();
+        
+        // Las vistas específicas se acceden a través del controlador
+        // No necesitamos agregarlas por defecto, se agregan cuando el usuario selecciona la actividad
+    }
+    
     @Override
     public void handleEvent(String eventType, Object data) {
         switch (eventType) {
@@ -238,6 +310,22 @@ public class ApplicationController implements IController {
                     SortingView sortingView = sortingController.getView();
                     sortingView.setDescription(desc);
                     actividadesView.addTab("Algoritmos de Ordenación", sortingView);
+                }
+            }
+            
+            if ("semana3".equals(weekId)) {
+                // get the specific section for the activity 
+                String primary = getPrimarySectionForActivity(weekId, activityId);
+                String desc = primary != null ? model.getWeekSectionDescription(weekId, primary) : "";
+                actividadesView.updateDescription(desc);
+                if ("coinchange".equals(activityId)) {
+                    CoinChangeView coinView = greedyController.getCoinChangeView();
+                    coinView.setDescription(desc);
+                    actividadesView.addTab("Cambio de Moneda", coinView);
+                } else if ("tsp".equals(activityId)) {
+                    TravelingSalesmanView tspView = greedyController.getTravelingSalesmanView();
+                    tspView.setDescription(desc);
+                    actividadesView.addTab("Agente Viajero", tspView);
                 }
             }
         }
@@ -286,6 +374,8 @@ public class ApplicationController implements IController {
             populateActivitiesView();
             // Ensure semana2 tabs and controllers are initialized so each actividad has its own tab
             setupSemana2Content();
+            // Ensure semana3 tabs and controllers are initialized
+            setupSemana3Content();
             // Expandir todos los nodos para que el usuario vea las actividades
             actividadesView.showWeeks();
             view.showActivities();

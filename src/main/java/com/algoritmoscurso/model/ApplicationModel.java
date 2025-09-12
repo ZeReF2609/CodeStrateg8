@@ -3,6 +3,7 @@ package com.algoritmoscurso.model;
 import com.algoritmoscurso.interfaces.IModel;
 import com.algoritmoscurso.model.sorting.SortingModel;
 import com.algoritmoscurso.model.bigo.BigOModel;
+import com.algoritmoscurso.model.greedy.GreedyModel;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,12 +18,14 @@ public class ApplicationModel implements IModel {
     private Map<String, Map<String, String>> weekSections;
     private SortingModel sortingModel;
     private BigOModel bigOModel;
+    private GreedyModel greedyModel;
     
     public ApplicationModel() {
         weekTitles = new HashMap<>();
     weekSections = new HashMap<>();
         sortingModel = new SortingModel();
         bigOModel = new BigOModel();
+        greedyModel = new GreedyModel();
         initialize();
     }
     
@@ -42,6 +45,7 @@ public class ApplicationModel implements IModel {
         currentWeek = "";
         sortingModel.clear();
         bigOModel.clear();
+        greedyModel.clear();
     }
     
     /**
@@ -50,11 +54,19 @@ public class ApplicationModel implements IModel {
     private void setupWeekData() {
         // Semana 2 - populate title and sections
         weekTitles.put("semana2", "Semana 2: Estructuras de Control y Algoritmos de Ordenación");
-    Map<String, String> s2 = new HashMap<>();
-    // Una sola actividad por tema; títulos legibles que se usarán como secciones en el árbol
-    s2.put("Actividad Big O", "Presentar al menos 10 casos de ejemplos de estructuras de bucles y condicionales, mostrando el proceso de cálculo de la complejidad a través de la notación Big O.");
-    s2.put("Actividad Ordenación", "Implementar los algoritmos de ordenación: burbuja, inserción, selección, quicksort y mergesort. Incluir un menú que permita seleccionar el método y ejecutar todos los algoritmos sobre el mismo conjunto de datos para comparar comportamiento.");
+        Map<String, String> s2 = new HashMap<>();
+        // Una sola actividad por tema; títulos legibles que se usarán como secciones en el árbol
+        s2.put("Actividad Big O", "Presentar al menos 10 casos de ejemplos de estructuras de bucles y condicionales, mostrando el proceso de cálculo de la complejidad a través de la notación Big O.");
+        s2.put("Actividad Ordenación", "Implementar los algoritmos de ordenación: burbuja, inserción, selección, quicksort y mergesort. Incluir un menú que permita seleccionar el método y ejecutar todos los algoritmos sobre el mismo conjunto de datos para comparar comportamiento.");
         weekSections.put("semana2", s2);
+        
+        // Semana 3 - Algoritmos Voraces
+        weekTitles.put("semana3", "Semana 3: Algoritmos Voraces (Greedy)");
+        Map<String, String> s3 = new HashMap<>();
+        s3.put("Algoritmos Voraces", "Implementar algoritmos voraces para resolver problemas de optimización: cambio de moneda y el problema del agente viajero.");
+        s3.put("Cambio de Moneda", "Implementar el algoritmo voraz para el problema del cambio de moneda, encontrando el número mínimo de monedas necesarias para dar el cambio de una cantidad específica.");
+        s3.put("Agente Viajero", "Implementar una solución voraz para el problema del agente viajero (TSP), encontrando una ruta que visite todas las ciudades y regrese al punto de partida con la menor distancia posible.");
+        weekSections.put("semana3", s3);
     }
 
     /**
@@ -137,6 +149,10 @@ public class ApplicationModel implements IModel {
     
     public BigOModel getBigOModel() {
         return bigOModel;
+    }
+    
+    public GreedyModel getGreedyModel() {
+        return greedyModel;
     }
     
     @Override
