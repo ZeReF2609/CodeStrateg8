@@ -25,6 +25,11 @@ public class ApplicationController implements IController {
     private SortingController sortingController;
     private BigOController bigOController;
     private GreedyController greedyController;
+    private GraphAlgorithmsController graphController;
+    private BacktrackingController backtrackingController;
+    private RecursionController recursionController;
+    private DynamicProgrammingController dpController;
+    private ProbabilisticController probabilisticController;
     
     public ApplicationController() {
         model = new ApplicationModel();
@@ -34,7 +39,12 @@ public class ApplicationController implements IController {
         sortingController = new SortingController(model.getSortingModel());
         bigOController = new BigOController(model.getBigOModel());
         greedyController = new GreedyController(model.getGreedyModel());
-        
+        graphController = new GraphAlgorithmsController();
+        backtrackingController = new BacktrackingController();
+        recursionController = new RecursionController();
+        dpController = new DynamicProgrammingController();
+    probabilisticController = new ProbabilisticController();
+     
         initialize();
     }
     
@@ -106,6 +116,67 @@ public class ApplicationController implements IController {
                     }
                 }
             }
+
+            if ("semana4".equals(week)) {
+                actividadesView.addActivity(week, "graph", "Algoritmos de Grafos");
+                actividadesView.addActivity(week, "recursion", "Algoritmos Recursivos");
+                actividadesView.addActivity(week, "backtracking", "Algoritmos de Backtracking");
+
+                Map<String, String[]> keywords = new HashMap<>();
+                keywords.put("graph", new String[] { "grafo", "dijkstra", "kruskal" });
+                keywords.put("recursion", new String[] { "recurs", "quicksort", "búsqueda" });
+                keywords.put("backtracking", new String[] { "backtracking", "hanoi", "caballo" });
+
+                for (String sec : sections) {
+                    String lower = sec.toLowerCase();
+                    for (Map.Entry<String, String[]> entry : keywords.entrySet()) {
+                        for (String kw : entry.getValue()) {
+                            if (lower.contains(kw)) {
+                                actividadesView.addSection(week, entry.getKey(), sec);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ("semana5".equals(week)) {
+                actividadesView.addActivity(week, "floyd", "Floyd-Warshall");
+                actividadesView.addActivity(week, "mochila", "Mochila 0/1");
+
+                Map<String, String[]> keywords5 = new HashMap<>();
+                keywords5.put("floyd", new String[] { "floyd", "matriz", "all pairs" });
+                keywords5.put("mochila", new String[] { "mochila", "knapsack", "dp" });
+
+                for (String sec : sections) {
+                    String lower = sec.toLowerCase();
+                    for (Map.Entry<String, String[]> entry : keywords5.entrySet()) {
+                        for (String kw : entry.getValue()) {
+                            if (lower.contains(kw)) {
+                                actividadesView.addSection(week, entry.getKey(), sec);
+                            }
+                        }
+                    }
+                }
+            }
+            if ("semana6".equals(week)) {
+                actividadesView.addActivity(week, "montecarlo", "Monte Carlo (Estimación de Pi)");
+                actividadesView.addActivity(week, "miller", "Test de Primalidad (Miller-Rabin)");
+
+                Map<String, String[]> keywords6 = new HashMap<>();
+                keywords6.put("montecarlo", new String[] { "monte", "pi", "monte carlo" });
+                keywords6.put("miller", new String[] { "miller", "rabin", "primal" });
+
+                for (String sec : sections) {
+                    String lower = sec.toLowerCase();
+                    for (Map.Entry<String, String[]> entry : keywords6.entrySet()) {
+                        for (String kw : entry.getValue()) {
+                            if (lower.contains(kw)) {
+                                actividadesView.addSection(week, entry.getKey(), sec);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
 
@@ -144,6 +215,16 @@ public class ApplicationController implements IController {
                             TravelingSalesmanView tspView = greedyController.getTravelingSalesmanView();
                             tspView.setDescription(desc);
                             actividadesView.addTab("Agente Viajero", tspView);
+                        } else if ("graph".equals(activityId)) {
+                            actividadesView.addTab("Algoritmos de Grafos", graphController.getView());
+                        } else if ("backtracking".equals(activityId)) {
+                            actividadesView.addTab("Backtracking", backtrackingController.getView());
+                        } else if ("floyd".equals(activityId)) {
+                            actividadesView.addTab("Floyd-Warshall", dpController.getFloydView());
+                        } else if ("mochila".equals(activityId)) {
+                            actividadesView.addTab("Mochila 0/1", dpController.getKnapsackView());
+                        } else if ("montecarlo".equals(activityId) || "miller".equals(activityId)) {
+                            actividadesView.addTab("Algoritmos Probabilísticos", probabilisticController.getView());
                         }
                         return;
                     } else if (parts.length == 2) {
@@ -171,6 +252,18 @@ public class ApplicationController implements IController {
                             } else if ("tsp".equals(activityId)) {
                                 TravelingSalesmanView tspView = greedyController.getTravelingSalesmanView();
                                 actividadesView.addTab("Agente Viajero", tspView);
+                            } else if ("graph".equals(activityId)) {
+                                actividadesView.addTab("Algoritmos de Grafos", graphController.getView());
+                            } else if ("recursion".equals(activityId)) {
+                                actividadesView.addTab("Algoritmos Recursivos", recursionController.getView());
+                            } else if ("backtracking".equals(activityId)) {
+                                actividadesView.addTab("Backtracking", backtrackingController.getView());
+                            } else if ("floyd".equals(activityId)) {
+                                actividadesView.addTab("Floyd-Warshall", dpController.getFloydView());
+                            } else if ("mochila".equals(activityId)) {
+                                actividadesView.addTab("Mochila 0/1", dpController.getKnapsackView());
+                            } else if ("montecarlo".equals(activityId) || "miller".equals(activityId)) {
+                                actividadesView.addTab("Algoritmos Probabilísticos", probabilisticController.getView());
                             }
                         }
                         return;
@@ -198,6 +291,19 @@ public class ApplicationController implements IController {
             if ("coinchange".equals(activityId)) return "Cambio de Moneda";
             if ("tsp".equals(activityId)) return "Agente Viajero";
         }
+        if ("semana4".equals(week)) {
+            if ("graph".equals(activityId)) return "Algoritmos de Grafos";
+            if ("recursion".equals(activityId)) return "Algoritmos Recursivos";
+            if ("backtracking".equals(activityId)) return "Backtracking";
+        }
+        if ("semana5".equals(week)) {
+            if ("floyd".equals(activityId)) return "Floyd-Warshall";
+            if ("mochila".equals(activityId)) return "Mochila 0/1";
+        }
+        if ("semana6".equals(week)) {
+            if ("montecarlo".equals(activityId)) return "Monte Carlo (Estimación de Pi)";
+            if ("miller".equals(activityId)) return "Test de Primalidad (Miller-Rabin)";
+        }
         return null;
     }
     
@@ -212,6 +318,10 @@ public class ApplicationController implements IController {
                 return "Semana 3";
             case "semana4":
                 return "Semana 4";
+            case "semana5":
+                return "Semana 5";
+            case "semana6":
+                return "Semana 6";
             default:
                 return week.toUpperCase();
         }
@@ -262,6 +372,22 @@ public class ApplicationController implements IController {
         greedyController.initialize();
         
         // Las vistas específicas se acceden a través del controlador
+        // No necesitamos agregarlas por defecto, se agregan cuando el usuario selecciona la actividad
+    }
+    
+    /**
+     * Configura el contenido específico de la Semana 4
+     */
+    private void setupSemana4Content() {
+        // Inicializar controladores de semana 4
+        if (graphController != null) {
+            graphController.initialize();
+        }
+        if (backtrackingController != null) {
+            backtrackingController.initialize();
+        }
+        
+        // Las vistas específicas se acceden a través de los controladores
         // No necesitamos agregarlas por defecto, se agregan cuando el usuario selecciona la actividad
     }
     
@@ -328,6 +454,22 @@ public class ApplicationController implements IController {
                     actividadesView.addTab("Agente Viajero", tspView);
                 }
             }
+
+            if ("semana4".equals(weekId)) {
+                // get the specific section for the activity 
+                String primary = getPrimarySectionForActivity(weekId, activityId);
+                String desc = primary != null ? model.getWeekSectionDescription(weekId, primary) : "";
+                actividadesView.updateDescription(desc);
+                
+                if ("graph".equals(activityId)) {
+                    actividadesView.addTab("Algoritmos de Grafos", graphController.getView());
+                } else if ("recursion".equals(activityId)) {
+                    actividadesView.addTab("Algoritmos Recursivos", recursionController.getView());
+                } else if ("backtracking".equals(activityId)) {
+                    actividadesView.addTab("Backtracking", backtrackingController.getView());
+                }
+            }
+            
         }
         updateView();
     }
@@ -376,6 +518,11 @@ public class ApplicationController implements IController {
             setupSemana2Content();
             // Ensure semana3 tabs and controllers are initialized
             setupSemana3Content();
+            // Ensure semana4 tabs and controllers are initialized
+            setupSemana4Content();
+            // Initialize semana5/6 controllers if present
+            if (dpController != null) dpController.initialize();
+            if (probabilisticController != null) probabilisticController.initialize();
             // Expandir todos los nodos para que el usuario vea las actividades
             actividadesView.showWeeks();
             view.showActivities();
